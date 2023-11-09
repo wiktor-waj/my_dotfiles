@@ -9,8 +9,7 @@ print_help() {
     echo "Usage: $0 [options]"
     echo "Options:"
     echo "  -v  Verbose output. Print more information."
-    echo -n "  -f  Force. Always create symlinks even if files already exist. "
-    echo "Backups will be created even with this option enabled."
+    echo "  -f  Force. Always create symlinks even if files already exist. "
     echo "  -h  Help. Show this usage message."
     exit 0
 }
