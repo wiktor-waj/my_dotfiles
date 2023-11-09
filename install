@@ -110,10 +110,20 @@ create_symlinks() {
             create_symlink "$file" "$target_file"
         fi
     done
+    echo_if_verbose "All symbolic links for the dotfiles have been created."
+}
+
+setup_nvim() {
+    echo_if_verbose "Downloading plug.vim"
+    sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+    echo_if_verbose "Installing nvim plugins"
+    nvim -es -u init.vim -i NONE -c "PlugInstall" -c "qa"
 }
 
 dotfiles_dir="$(pwd)/dotfiles"
 
 create_symlinks "$dotfiles_dir"
+setup_nvim
 
-echo_if_verbose "All symbolic links for the dotfiles have been created."
+
