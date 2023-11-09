@@ -136,11 +136,11 @@ fi
 
 #   Enable tab completion for git
 #   ------------------------------------------------------------
-    source $HOME/.git/git-completion.bash					                                                       	# File included in repository enables tab completion for git commands
+    source $HOME/.local/git/git-completion.bash					                                                       	# File included in repository enables tab completion for git commands
 
 #   Change Prompt
 #   ------------------------------------------------------------
-    source $HOME/.git/git-prompt.sh							                                                       	# You need to import that for (__git_ps1) to work properly, file included in repository
+    source $HOME/.local/git/git-prompt.sh							                                                       	# You need to import that for (__git_ps1) to work properly, file included in repository
     export GIT_PS1_SHOWDIRTYSTATE=1	                                                                        # Required for git
     export PS1="$light_green\h$lighter_yellow\$(__git_ps1) $blue\W $reset$ "
 #   export PS1='\[\e]0;\u@\h: \w\a\]\[\e[32;1m\]\u@\h:\w \[\e[33;1m\]$(__git_ps1 "[%s] ")\[\e[32;1m\]\$ \[\e[0m\]'  # Other version of PS1

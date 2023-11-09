@@ -1,0 +1,78 @@
+#!/bin/bash
+
+# Function to create a directory if it doesn't exist
+create_directory() {
+    if [ ! -d "$1" ]; then
+        echo "Creating directory: $1"
+        mkdir -p "$1"
+    else
+        echo "Directory already exists: $1"
+    fi
+}
+
+# Function to create symlinks for the dotfiles
+create_symlinks() {
+    local source_dir="$1"
+    local target_dir="$2"
+    local file_name
+
+    
+    # Loop through dotfiles in the source directory
+    for file in "$source_dir"/.*; do
+        file_name=$(basename "$file")
+
+        # Skip if it's current/parent directory or a directory
+        if [[ "$file_name" == "." || "$file_name" == ".." || -d "$file" ]]; then
+            continue
+        fi
+
+        # Check if the symlink already exists
+        if [ -e "$target_dir/$file_name" ]; then
+            echo -n "File $target_dir/$file_name exists. "
+            echo -n "Move to backup and create new symlink? (y/N) "
+            read -n 1 -r
+            echo    # Move to a new line
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                # Move the existing file to the backup directory
+                mv "$target_dir/$file_name" "$backup_dir/"
+                echo "Moved existing $file_name to $backup_dir"
+
+                # Create new symlink
+                ln -s "$(realpath -- "$file")" "$target_dir/$file_name"
+                echo "Created new symlink for $file_name in $target_dir"
+            else
+                echo "Skipping $file_name"
+            fi
+        else
+            ln -s "$(realpath -- "$file")" "$target_dir/$file_name"
+            echo "Created symlink for $file_name in $target_dir"
+        fi
+    done
+}
+
+# Array of directories to be created
+config_dirs=(
+    "$HOME/.config"
+    "$HOME/.config/nvim"
+    "$HOME/.config/i3"
+    "$HOME/.git"
+)
+dotfiles_dir=$(pwd)
+backup_dir="$dotfiles_dir/backup"
+
+# Ensure the backup directory exists
+    create_directory "$backup_dir"
+
+# Loop over the array of directories and create each one
+for dir in "${config_dirs[@]}"; do
+    create_directory "$dir"
+done
+
+
+
+
+# Call function to create symlinks for nvim and i3 dotfiles
+create_symlinks "$dotfiles_dir" "$HOME/.config/nvim"
+create_symlinks "$dotfiles_dir" "$HOME/.config/i3"
+
+#echo "All symbolic links have been created."
