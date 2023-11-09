@@ -1,78 +1,120 @@
 #!/bin/bash
 
+# Initialize flag variables
+verbose=0
+force=0
+
+# Help message function
+print_help() {
+    echo "Usage: $0 [options]"
+    echo "Options:"
+    echo "  -v  Verbose output. Print more information."
+    echo -n "  -f  Force. Always create symlinks even if files already exist. "
+    echo "Backups will be created even with this option enabled."
+    echo "  -h  Help. Show this usage message."
+    exit 0
+}
+
+# Parse command line options
+while getopts ":vfh" opt; do
+    case $opt in
+        v)
+            verbose=1
+            ;;
+        f)
+            force=1
+            ;;
+        h)
+            print_help
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            exit 1
+            ;;
+    esac
+done
+
+# Remove the options from the positional parameters
+shift $((OPTIND -1))
+
+
+# Function to echo messages if verbose is enabled
+echo_if_verbose() {
+    [ $verbose -eq 1 ] && echo "$@"
+}
+
 # Function to create a directory if it doesn't exist
 create_directory() {
     if [ ! -d "$1" ]; then
-        echo "Creating directory: $1"
+        echo_if_verbose "Creating directory: $1"
         mkdir -p "$1"
     else
-        echo "Directory already exists: $1"
+        echo_if_verbose "Directory already exists: $1"
     fi
 }
 
-# Function to create symlinks for the dotfiles
+create_backup() {
+    local target_file=$1
+    local backup_dir=$2
+
+    local backup_path="$backup_dir/$(basename "$target_file")"
+    mv "$target_file" "$backup_path"
+    echo_if_verbose "Moved existing file to $backup_path"
+}
+
+create_symlink() {
+    local file_path=$1
+    local link_path=$2
+
+    ln -s "$(realpath -- "$file_path")" "$link_path"
+    echo "Created new symlink for $file_path -- $link_path"
+
+}
+
+# Function to create symlinks for all files in a specified directory
 create_symlinks() {
-    local source_dir="$1"
-    local target_dir="$2"
-    local file_name
+    local source_dir=$1
+    local backup_dir="./backup"
 
-    
-    # Loop through dotfiles in the source directory
-    for file in "$source_dir"/.*; do
-        file_name=$(basename "$file")
+    # Ensure the backup directory exists
+    create_directory "$backup_dir"
 
-        # Skip if it's current/parent directory or a directory
-        if [[ "$file_name" == "." || "$file_name" == ".." || -d "$file" ]]; then
-            continue
-        fi
+    # Find all files in the source directory and loop through them
+    for file in $(find $source_dir -type f); do
+        # Construct the target directory path
+        local target_file="${file/$source_dir/$HOME}"
+        local target_dir=$(dirname "$target_file")
 
-        # Check if the symlink already exists
-        if [ -e "$target_dir/$file_name" ]; then
-            echo -n "File $target_dir/$file_name exists. "
-            echo -n "Move to backup and create new symlink? (y/N) "
-            read -n 1 -r
-            echo    # Move to a new line
-            if [[ $REPLY =~ ^[Yy]$ ]]; then
-                # Move the existing file to the backup directory
-                mv "$target_dir/$file_name" "$backup_dir/"
-                echo "Moved existing $file_name to $backup_dir"
+        # Create the target directory if it doesn't exist
+        create_directory "$target_dir"
 
-                # Create new symlink
-                ln -s "$(realpath -- "$file")" "$target_dir/$file_name"
-                echo "Created new symlink for $file_name in $target_dir"
+        # Check if the file (or symlink) already exists
+        if [ -e "$target_file" ] || [ -h $target_file ]; then
+            if [ $force -eq 1 ]; then
+                # Force mode: backup  without prompting
+                create_backup "$target_file" "$backup_dir"
+                create_symlink "$file" "$target_file"
             else
-                echo "Skipping $file_name"
+                # No force mode: ask the user
+                echo -n "File $target_file exists. "
+                echo -n "Move to backup and create a new symlink? (y/N) "
+                read -n 1 -r
+                echo    # Move to a new line
+                if [[ $REPLY =~ ^[Yy]$ ]]; then
+                    create_backup "$target_file" "$backup_dir"
+                    create_symlink "$file" "$target_file"
+                else
+                    echo "Skipping $file"
+                fi
             fi
         else
-            ln -s "$(realpath -- "$file")" "$target_dir/$file_name"
-            echo "Created symlink for $file_name in $target_dir"
+            create_symlink "$file" "$target_file"
         fi
     done
 }
 
-# Array of directories to be created
-config_dirs=(
-    "$HOME/.config"
-    "$HOME/.config/nvim"
-    "$HOME/.config/i3"
-    "$HOME/.git"
-)
-dotfiles_dir=$(pwd)
-backup_dir="$dotfiles_dir/backup"
+dotfiles_dir="$(pwd)/dotfiles"
 
-# Ensure the backup directory exists
-    create_directory "$backup_dir"
+create_symlinks "$dotfiles_dir"
 
-# Loop over the array of directories and create each one
-for dir in "${config_dirs[@]}"; do
-    create_directory "$dir"
-done
-
-
-
-
-# Call function to create symlinks for nvim and i3 dotfiles
-create_symlinks "$dotfiles_dir" "$HOME/.config/nvim"
-create_symlinks "$dotfiles_dir" "$HOME/.config/i3"
-
-#echo "All symbolic links have been created."
+echo_if_verbose "All symbolic links for the dotfiles have been created."
