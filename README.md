@@ -6,7 +6,7 @@ directory should you choose to overwrite the existing files.
 
 
 
-Installing works by creating symbolic links to the files within this repository.
+Installing works by creating symbolic links to the files within `dotfiles` repository.
 This is done to easily keep track of changes. The side effect of this solution
 is that you need to keep the repository somewhere on your disk if you want the
 dotfiles to work.
