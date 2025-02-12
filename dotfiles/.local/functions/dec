@@ -1,0 +1,2 @@
+# decrypts a 256-bit encrypted file
+dec () { openssl enc -aes-256-cbc -d -in "$1" -out dec_"$1" ; rm -fr "$1" ; mv dec_"$1" "$1" ; }

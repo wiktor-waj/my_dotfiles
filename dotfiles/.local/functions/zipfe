@@ -1,0 +1,2 @@
+# create an ecrypted ZIP archive of a folder
+zipfe () { zip -er "$1".zip "$1" ; }

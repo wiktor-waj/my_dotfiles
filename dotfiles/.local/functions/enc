@@ -1,0 +1,2 @@
+# encrypts a file with password using 256-bit encryption
+enc () { openssl enc -aes-256-cbc -e -in "$1" -out enc_"$1" ; rm -fr "$1" ; mv enc_"$1" "$1" ; }

@@ -38,4 +38,4 @@ call plug#begin()
 call plug#end()
 
 
-let g:mkdp_browser = 'firefox'
+let g:mkdp_browser = 'open -a Safari'

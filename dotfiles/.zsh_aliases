@@ -1,0 +1,40 @@
+# Make sudo aplicable for aliases
+alias sudo='sudo '
+# make ls and grep colorfull
+alias ls='ls -GF'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+# force of habit
+alias vim='nvim'
+# preferred 'mkdir' implementation
+alias mkdir='mkdir -pv'
+# preferred 'ls' implementation
+alias ll='ls -FGlAhp'
+# preferred 'less' implementation
+alias less='less -FSRXc'
+# change directory to home
+alias ~='cd ~/'
+# go back 1 directory level
+alias ..='cd ../'
+# go back 2 directory levels
+alias .2='cd ../../'
+# go back 3 directory levels
+alias .3='cd ../../../'
+# go back 4 directory levels
+alias .4='cd ../../../../'
+# go back 5 directory levels
+alias .5='cd ../../../../../'
+# go back 6 directory levels
+alias .6='cd ../../../../../../'
+# opens current directory in finder
+alias finder='open .'
+# echo all executable paths in human readable format
+alias show_path='echo -e ${PATH//:/\\n}'
+# quickly search for a file in a current directory
+alias qfind='find . -name '
+# cleanupDS:  Recursively delete .DS_Store files
+alias cleanup_ds="find . -type f -name '*.DS_Store' -ls -delete"
+# cleanupLS:  Clean up LaunchServices to remove duplicates in the "Open With" menu
+alias cleanup_ls="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
+
