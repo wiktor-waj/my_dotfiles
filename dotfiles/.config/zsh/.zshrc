@@ -19,7 +19,7 @@ export LSCOLORS=ExFxBxDxCxegedabagacad
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # Because brew installs bash autocomplete for git every update it overrides
-# zsh tab completion system then remove it so zsh tab completion can be used
+# zsh tab completion system. Remove it so zsh tab completion can be used
 [ -e /opt/homebrew/Cellar/git/2.48.1share/zsh/site-functions/git-completion.bash ] && rm /opt/homebrew/Cellar/git/2.48.1/share/zsh/site-functions/git-completion.bash
 [ -e /opt/homebrew/Cellar/git/2.48.1share/zsh/site-functions/_git ] && rm /opt/homebrew/Cellar/git/2.48.1share/zsh/site-functions/_git
 
@@ -48,7 +48,7 @@ source $HOME/.local/git/git-prompt.sh
 GIT_PS1_SHOWDIRTYSTATE=true
 GIT_PS1_SHOWUNTRACKEDFILES=true
 GIT_PS1_SHOWSTASHSTATE=true
-# %(?.λ.%?) <- if return code (?) is 0 show lambda, esle show %? (reutrn code of
+# %(?.λ.%?) <- if return code (?) is 0 show lambda, else show %? (return code of
 # previous command)
 setopt PROMPT_SUBST ; PS1='%F{10}%(?.λ.%?)%F{11}$(__git_ps1 " (%s)") %F{12}%2~ %f%# '
 
@@ -58,5 +58,8 @@ export EDITOR="$(which nvim) -w"
 # Set Visual Editor
 export VISUAL="$(which nvim)"
 
+# Point history file to .config/zsh
+export HISTFILE="${ZDOTDIR}/history"
+
 # Source aliases
-[ -e $HOME/.zsh_aliases ] && source $HOME/.zsh_aliases
+source $HOME/.config/zsh/aliases
