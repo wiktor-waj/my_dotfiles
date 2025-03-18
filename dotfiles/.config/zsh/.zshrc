@@ -20,8 +20,8 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 
 # Because brew installs bash autocomplete for git every update it overrides
 # zsh tab completion system. Remove it so zsh tab completion can be used
-[ -e /opt/homebrew/Cellar/git/2.48.1share/zsh/site-functions/git-completion.bash ] && rm /opt/homebrew/Cellar/git/2.48.1/share/zsh/site-functions/git-completion.bash
-[ -e /opt/homebrew/Cellar/git/2.48.1share/zsh/site-functions/_git ] && rm /opt/homebrew/Cellar/git/2.48.1share/zsh/site-functions/_git
+[ -e /opt/homebrew/share/zsh/site-functions/git-completion.bash ] && rm /opt/homebrew/share/zsh/site-functions/git-completion.bash
+[ -e /opt/homebrew/share/zsh/site-functions/_git ] && rm /opt/homebrew/share/zsh/site-functions/_git
 
 # Enable tab completion system
 autoload -Uz compinit && compinit
@@ -57,6 +57,9 @@ export EDITOR="$(which nvim) -w"
 
 # Set Visual Editor
 export VISUAL="$(which nvim)"
+
+# Set pager (for man)
+export PAGER='less -s -M +Gg'
 
 # Point history file to .config/zsh
 export HISTFILE="${ZDOTDIR}/history"

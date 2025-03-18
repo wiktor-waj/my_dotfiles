@@ -1,0 +1,123 @@
+#!/usr/bin/env sh
+
+#
+# for this to work you must configure sudo such that
+# it will be able to run the command without password
+#
+# see this wiki page for information:
+#  - https://github.com/koekeishiya/yabai/wiki/Installing-yabai-(latest-release)#configure-scripting-addition
+#
+sudo yabai --load-sa
+yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+
+# mission-control desktop labels
+yabai -m space  1 --label web
+yabai -m space  2 --label code
+yabai -m space  3 --label mail
+yabai -m space  4 --label notes
+yabai -m space  5 --label space5
+yabai -m space  6 --label social
+yabai -m space  7 --label media
+yabai -m space  8 --label games
+yabai -m space  9 --label space9 # left monitor
+yabai -m space 10 --label music  # right monitor
+
+# window rules
+yabai -m rule --add app="Safari"       space=web
+yabai -m rule --add app="Mail"         space=mail
+yabai -m rule --add app="Calendar"     space=mail
+yabai -m rule --add app="Messages"     space=social
+yabai -m rule --add app="FaceTime"     space=social
+yabai -m rule --add app="Notes"        space=notes
+yabai -m rule --add app="Steam"        space=games
+yabai -m rule --add app="Dota 2"       space=games
+yabai -m rule --add app="Xcode"        space=code
+yabai -m rule --add app="Transmission" space=media
+yabai -m rule --add app="TV"           space=media
+yabai -m rule --add app="IINA"         space=media
+yabai -m rule --add app="Spotify"      space=music
+yabai -m rule --add app="Music"        space=music
+yabai -m rule --add app="Minecraft.*"  space=games
+yabai -m rule --add app="java"         space=games
+
+# ignored apps
+ignored_apps=(
+  "App Store"
+  "Calculator"
+  "Clock"
+  "Contacts"
+  "Dota 2"
+  "FaceTime"
+  "Installer"
+  "IINA"
+  "Photo Booth"
+  "Podcasts"
+  "Poolside FM"
+  "Preview"
+  "QuickTime Player"
+  "Reminders"
+  "Stickies"
+  "Steam"
+  "System Information"
+  "System Settings"
+  "TV"
+  "Weather"
+  "Proton Mail Bridge"
+)
+
+for app in "${ignored_apps[@]}";
+do yabai -m rule --add app="${app}" manage=off sub-layer=below;
+done;
+
+# do not manage pop-up windows of certain aplications
+yabai -m rule --add app="Finder" title=" Info"      manage=off
+yabai -m rule --add app="Finder" title="Copy"       manage=off
+yabai -m rule --add app="Finder" title="Mov"        manage=off
+yabai -m rule --add app="Finder" title="Trash"      manage=off
+yabai -m rule --add app="Mail"   title="[General|Accounts|Junk Mail|Fonts & Colors|Viewing|Composing|Signatures|Rules|Extensions|Privacy]" manage=off
+# https://support.apple.com/guide/music/use-music-miniplayer-mus71d7dcfce/mac
+yabai -m rule --add app="Music"  title="MiniPlayer" manage=off
+
+# specific space settings
+yabai -m config --space social layout stack
+yabai -m config --space social top_padding 15 bottom_padding 30 left_padding 30 right_padding 30
+yabai -m config --space mail top_padding 15 bottom_padding 30 left_padding 30 right_padding 30
+yabai -m config --space games     layout float
+yabai -m config --space music     layout stack
+yabai -m config --space music     top_padding 15 bottom_padding 30 left_padding 30 right_padding 30
+
+# global settings
+yabai -m config                                 \
+    external_bar                 off:40:0       \
+    menubar_opacity              1.0            \
+    display_arrangement_order    default        \
+    window_origin_display        default        \
+    window_placement             second_child   \
+    window_insertion_point       focused        \
+    window_zoom_persist          on             \
+    window_shadow                off            \
+    window_animation_duration    0.0            \
+    window_animation_easing      ease_out_circ  \
+    window_opacity_duration      0.0            \
+    active_window_opacity        1.0            \
+    normal_window_opacity        1.0            \
+    window_opacity               on             \
+    window_border                off            \
+    insert_feedback_color        0xffd75f5f     \
+    split_ratio                  0.50           \
+    split_type                   auto           \
+    auto_balance                 off            \
+    top_padding                  12             \
+    bottom_padding               12             \
+    left_padding                 12             \
+    right_padding                12             \
+    window_gap                   10             \
+    layout                       bsp            \
+    mouse_modifier               cmd            \
+    mouse_action1                move           \
+    mouse_action2                resize         \
+    mouse_follows_focus          on             \
+    focus_follows_mouse          autofocus      \
+    mouse_drop_action            swap
+
+echo "yabai configuration loaded.."
