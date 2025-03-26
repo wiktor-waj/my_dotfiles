@@ -84,6 +84,11 @@ cmd + shift - j : yabai -m window --swap south || $(yabai -m window --display so
 cmd + shift - k : yabai -m window --swap north || $(yabai -m window --display north; yabai -m display --focus north)
 cmd + shift - l : yabai -m window --swap east  || $(yabai -m window --display east; yabai -m display --focus east)
 
+# minimize selected window
+cmd - m : yabai -m window --minimize
+# deminimize last minimized window (top of the stack minimized windows stack)
+cmd + shift - m : yabai -m window --deminimize "$(yabai -m query --windows | jq '[.[] | select(."is-minimized" == true) | .id] | last // -1')"
+
 # fast focus desktop
 ctrl - 1 : yabai -m space --focus  1 || skhd -k "ctrl + alt + cmd - 1"
 ctrl - 2 : yabai -m space --focus  2 || skhd -k "ctrl + alt + cmd - 2"

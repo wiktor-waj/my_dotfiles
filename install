@@ -56,7 +56,10 @@ create_backup() {
     local target_file=$1
     local backup_dir=$2
 
-    local backup_path="$backup_dir/$(basename "$target_file")"
+    local backup_path="${target_file/$HOME/$backup_dir}"
+    if [[ ! -d $(dirname $backup_path) ]]; then
+        mkdir -p $(dirname $backup_path)
+    fi
     mv "$target_file" "$backup_path"
     echo_if_verbose "Moved existing file to $backup_path"
 }
@@ -66,7 +69,7 @@ create_symlink() {
     local link_path=$2
 
     ln -s "$(realpath -- "$file_path")" "$link_path"
-    echo "Created new symlink for $file_path -- $link_path"
+    echo_if_verbose "Created new symlink for $file_path -- $link_path"
 
 }
 
@@ -123,9 +126,21 @@ setup_nvim() {
     nvim -es -u init.vim -i NONE -c "PlugInstall" -c "qa"
 }
 
+setup_yazi() {
+    which yazi > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo "Install yazi and run this script again to install yazi's plugins"
+        return 1
+    else
+        ya pack -i
+    fi
+    return 0
+}
+
 dotfiles_dir="$(pwd)/dotfiles"
 
 create_symlinks "$dotfiles_dir"
 setup_nvim
+setup_yazi
 
 

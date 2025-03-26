@@ -53,10 +53,10 @@ GIT_PS1_SHOWSTASHSTATE=true
 setopt PROMPT_SUBST ; PS1='%F{10}%(?.λ.%?)%F{11}$(__git_ps1 " (%s)") %F{12}%2~ %f%# '
 
 # Set Default Editor
-export EDITOR="$(which nvim) -w"
+export EDITOR=nvim
 
 # Set Visual Editor
-export VISUAL="$(which nvim)"
+export VISUAL=nvim
 
 # Set pager (for man)
 export PAGER='less -s -M +Gg'
