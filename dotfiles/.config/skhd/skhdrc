@@ -64,7 +64,7 @@
 # open terminal, blazingly fast compared to iTerm/Hyper
 # for now dont use kitty (maybe in the future)
 # cmd - return : /Applications/kitty.app/Contents/MacOS/kitty --single-instance -d ~
-cmd - return : open -n /Applications/iTerm.app
+cmd - return : open -a 'iTerm'
 
 # restart yabai
 hyper - r : yabai --restart-service | yabai -m rule --apply

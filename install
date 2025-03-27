@@ -77,6 +77,8 @@ create_symlink() {
 create_symlinks() {
     local source_dir=$1
     local backup_dir="./backup"
+    local linux_exclusives=" i3/config"
+    local macos_exclusives=" skhd/skhdrc yabai/yabairc borders/bordersrc"
 
     # Ensure the backup directory exists
     create_directory "$backup_dir"
@@ -86,6 +88,23 @@ create_symlinks() {
         # Construct the target directory path
         local target_file="${file/$source_dir/$HOME}"
         local target_dir=$(dirname "$target_file")
+
+        # if on MacOS skip Linux exclusives
+        file_base="${file/$source_dir\/.config\//}"
+        if [[ $system == "MacOS" ]]; then
+            if echo $linux_exclusives | grep "$file_base"; then
+                echo_if_verbose "Skipping $file_base because it's Linux exclusive"
+                echo_if_verbose
+                continue
+            fi
+        # and vice-versa for Linux
+        elif [[ $system == "Linux" ]]; then
+            if echo $macos_exclusives | grep "$file_base"; then
+                echo_if_verbose "Skipping $file_base because it's MacOS exclusive"
+                echo_if_verbose
+                continue
+            fi
+        fi
 
         # Create the target directory if it doesn't exist
         create_directory "$target_dir"
@@ -98,7 +117,7 @@ create_symlinks() {
                 create_symlink "$file" "$target_file"
             else
                 # No force mode: ask the user
-                echo -n "File $target_file exists. "
+                echo "File $target_file exists. "
                 echo -n "Move to backup and create a new symlink? (y/N) "
                 read -n 1 -r
                 echo    # Move to a new line
@@ -106,7 +125,8 @@ create_symlinks() {
                     create_backup "$target_file" "$backup_dir"
                     create_symlink "$file" "$target_file"
                 else
-                    echo "Skipping $file"
+                    echo "Skipping $(basename $file)"
+                    echo
                 fi
             fi
         else
@@ -114,6 +134,35 @@ create_symlinks() {
         fi
     done
     echo_if_verbose "All symbolic links for the dotfiles have been created."
+}
+
+install_packages() {
+    common_packages_to_install=" neovim tmux gnupg jq fzf fd yazi poppler xdg-ninja clipboard"
+    linux_packages_to_install=" zsh wget curl"
+    macos_packages_to_install=" FelixKratz/formulae/borders koekeishiya/formulae/yabai koekeishiya/formulae/skhd"
+
+    echo_if_verbose -n "Installing packages "
+    if [[ $system == "Linux" ]]; then
+        if cat /etc/*release | grep ^NAME | grep -q -E -i 'CentOS|Red|Fedora'; then
+            echo_if_verbose "for RedHat based Linux"
+            yum install -y $common_packages_to_install $linux_packages_to_install 
+        elif cat /etc/*release | grep ^NAME | grep -q -E -i 'Ubuntu|Debian|Mint'; then
+            echo_if_verbose "for Debian based Linux"
+            apt-get update && apt-get install -y $common_packages_to_install $linux_packages_to_install 
+        elif cat /etc/*release | grep ^NAME | grep -q -E -i 'Arch|Manjaro'; then
+            echo_if_verbose "for Arch based Linux"
+            sudo pacman -Syu $common_packages_to_install $linux_packages_to_install 
+        fi
+    elif [[ $system == "MacOS" ]]; then
+        echo_if_verbose "for MacOS"
+        brew update && brew install $common_packages_to_install $macos_packages_to_install
+        skhd --start-service
+        yabai --start-service
+    else
+        echo "OS NOT DETECTED, couldn't install packages"
+        exit 1;
+    fi
+
 }
 
 setup_nvim() {
@@ -139,7 +188,16 @@ setup_yazi() {
 
 dotfiles_dir="$(pwd)/dotfiles"
 
+# Determine system
+system=$(uname -s)
+if echo $system | grep -q Darwin; then
+    system="MacOS"
+elif echo $system | grep -q Linux; then
+    system="Linux"
+fi
+
 create_symlinks "$dotfiles_dir"
+install_packages
 setup_nvim
 setup_yazi
 
