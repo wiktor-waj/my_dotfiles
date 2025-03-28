@@ -67,7 +67,7 @@
 cmd - return : open -a 'iTerm'
 
 # restart yabai
-hyper - r : yabai --restart-service | yabai -m rule --apply
+hyper - r : yabai --restart-service; sleep 3 && yabai -m rule --apply
 
 # focus window
 cmd - 0x2C : yabai -m window --focus recent   # cmd + /

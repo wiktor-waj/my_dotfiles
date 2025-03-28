@@ -78,7 +78,7 @@ create_symlinks() {
     local source_dir=$1
     local backup_dir="./backup"
     local linux_exclusives=" i3/config"
-    local macos_exclusives=" skhd/skhdrc yabai/yabairc borders/bordersrc"
+    local macos_exclusives=" skhd/skhdrc yabai/yabairc borders/bordersrc scripts/toggle_function_keys.sh scripts/balance_spaces.py"
 
     # Ensure the backup directory exists
     create_directory "$backup_dir"
@@ -92,7 +92,7 @@ create_symlinks() {
         # if on MacOS skip Linux exclusives
         file_base="${file/$source_dir\/.config\//}"
         if [[ $system == "MacOS" ]]; then
-            if echo $linux_exclusives | grep "$file_base"; then
+            if echo $linux_exclusives | grep -q "$file_base"; then
                 echo_if_verbose "Skipping $file_base because it's Linux exclusive"
                 echo_if_verbose
                 continue
@@ -186,6 +186,11 @@ setup_yazi() {
     return 0
 }
 
+# changes default shell to zsh
+change_shell() {
+    chsh -s $(which zsh)
+}
+
 dotfiles_dir="$(pwd)/dotfiles"
 
 # Determine system
@@ -200,5 +205,4 @@ create_symlinks "$dotfiles_dir"
 install_packages
 setup_nvim
 setup_yazi
-
-
+change_shell
