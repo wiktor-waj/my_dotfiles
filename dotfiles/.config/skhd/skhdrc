@@ -61,10 +61,8 @@
     "Dota 2"
 ]
 
-# open terminal, blazingly fast compared to iTerm/Hyper
-# for now dont use kitty (maybe in the future)
-# cmd - return : /Applications/kitty.app/Contents/MacOS/kitty --single-instance -d ~
-cmd - return : open -a 'iTerm'
+# open terminal
+cmd - return : open -a 'wezTerm'
 
 # restart yabai
 hyper - r : yabai --restart-service; sleep 3 && yabai -m rule --apply
@@ -120,7 +118,7 @@ shift + ctrl - w : yabai -m window --move rel:0:-20
 shift + ctrl - d : yabai -m window --move rel:20:0
 
 # toggle window fullscreen zoom
-alt + cmd - f : yabai -m window --toggle zoom-fullscreen
+ctrl + cmd - f : yabai -m window --toggle zoom-fullscreen
 
 # toggle window native fullscreen
 alt - f : yabai -m window --toggle native-fullscreen
@@ -134,6 +132,7 @@ ctrl + cmd - t : yabai -m window --toggle float --grid 4:4:1:1:2:2
 ctrl + cmd - l ; layout
 # from 'layout' mode activate mode 'default'
 layout < escape ; default
+layout < q ; default
 # change layout of desktop
 layout < b : yabai -m space --layout bsp
 layout < f : yabai -m space --layout float
@@ -153,6 +152,7 @@ layout < e : yabai -m window --toggle split
 ctrl + cmd - r ; resize 
 # from 'resize' mode, activate mode 'default'
 resize < escape ; default
+resize < q ; default
 # equalize windows
 resize < b : yabai -m space --balance
 # preferred resizing behaviour

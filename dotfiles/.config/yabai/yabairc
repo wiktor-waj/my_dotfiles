@@ -14,7 +14,7 @@ yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
 $HOME/.local/scripts/balance_spaces.py
 
 # rebalance spaces when display is added/removed
-rebalance_cmd="$HOME/.local/scripts/balance_spaces.py && sleep 3 && yabai -m rule --apply"
+rebalance_cmd="sleep 5 && $HOME/.local/scripts/balance_spaces.py && sleep 5 && yabai --restart-service && yabai -m rule --apply"
 yabai -m signal --add event=display_added   action="$rebalance_cmd"
 yabai -m signal --add event=display_removed action="$rebalance_cmd"
 
@@ -91,7 +91,6 @@ yabai -m rule --add app="Music"  title="[MiniPlayer|Activity]" manage=off
 yabai -m config --space social layout stack
 yabai -m config --space social top_padding 15 bottom_padding 30 left_padding 30 right_padding 30
 yabai -m config --space mail top_padding 15 bottom_padding 30 left_padding 30 right_padding 30
-yabai -m config --space games     layout float
 yabai -m config --space music     layout stack
 yabai -m config --space music     top_padding 15 bottom_padding 30 left_padding 30 right_padding 30
 
@@ -121,7 +120,7 @@ yabai -m config                                 \
     right_padding                16             \
     window_gap                   10             \
     layout                       bsp            \
-    mouse_modifier               shift          \
+    mouse_modifier               cmd            \
     mouse_action1                move           \
     mouse_action2                resize         \
     mouse_follows_focus          on             \

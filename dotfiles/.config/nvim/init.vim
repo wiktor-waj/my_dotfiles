@@ -1,3 +1,18 @@
+call plug#begin()
+" Plugin Section
+" Icons in nerd-tree
+ Plug 'ryanoasis/vim-devicons'
+ Plug 'preservim/nerdtree'
+ Plug 'preservim/nerdcommenter'
+ Plug 'mhinz/vim-startify'
+ Plug 'neoclide/coc.nvim', {'branch': 'release'}
+ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
+ Plug 'mtdl9/vim-log-highlighting'
+ " nice colorscheme
+ Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
+call plug#end()
+
 set showmatch               " show matching 
 set ignorecase              " case insensitive 
 set mouse=v                 " middle-click paste with 
@@ -21,18 +36,11 @@ set cursorline              " highlight current cursorline
 set ttyfast                 " Speed up scrolling in Vim
 set spell                   " enable spell check (may need to download language package)
 
-call plug#begin()
-" Plugin Section
-" Icons in nerd-tree
- Plug 'ryanoasis/vim-devicons'
- Plug 'preservim/nerdtree'
- Plug 'preservim/nerdcommenter'
- Plug 'mhinz/vim-startify'
- Plug 'neoclide/coc.nvim', {'branch': 'release'}
- Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
- Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
- Plug 'mtdl9/vim-log-highlighting'
-call plug#end()
+" set colorscheme
+lua << EOF
+require("catppuccin").setup({
+    transparent_background = true
+})
+EOF
+colorscheme catppuccin
 
-
-let g:mkdp_browser = 'open -a Safari'

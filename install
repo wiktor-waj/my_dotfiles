@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Initialize flag variables
+# initialize flag variables
 verbose=0
 force=0
 
-# Help message function
+# help message function
 print_help() {
     echo "Usage: $0 [options]"
     echo "Options:"
@@ -14,7 +14,7 @@ print_help() {
     exit 0
 }
 
-# Parse command line options
+# parse command line options
 while getopts ":vfh" opt; do
     case $opt in
         v)
@@ -33,16 +33,16 @@ while getopts ":vfh" opt; do
     esac
 done
 
-# Remove the options from the positional parameters
+# remove the options from the positional parameters
 shift $((OPTIND -1))
 
 
-# Function to echo messages if verbose is enabled
+# function to echo messages if verbose is enabled
 echo_if_verbose() {
     [ $verbose -eq 1 ] && echo "$@"
 }
 
-# Function to create a directory if it doesn't exist
+# function to create a directory if it doesn't exist
 create_directory() {
     if [ ! -d "$1" ]; then
         echo_if_verbose "Creating directory: $1"
@@ -73,12 +73,12 @@ create_symlink() {
 
 }
 
-# Function to create symlinks for all files in a specified directory
+# function to create symlinks for all files in a specified directory
 create_symlinks() {
     local source_dir=$1
     local backup_dir="./backup"
     local linux_exclusives=" i3/config"
-    local macos_exclusives=" skhd/skhdrc yabai/yabairc borders/bordersrc scripts/toggle_function_keys.sh scripts/balance_spaces.py"
+    local macos_exclusives=" skhd/skhdrc yabai/yabairc borders/bordersrc scripts/toggle_function_keys.sh scripts/balance_spaces.py wezterm/wezterm.lua"
 
     # Ensure the backup directory exists
     create_directory "$backup_dir"
@@ -137,9 +137,9 @@ create_symlinks() {
 }
 
 install_packages() {
-    common_packages_to_install=" neovim tmux gnupg jq fzf fd yazi poppler xdg-ninja clipboard"
+    common_packages_to_install=" neovim tmux gnupg jq fzf fd yazi poppler xdg-ninja clipboard python"
     linux_packages_to_install=" zsh wget curl"
-    macos_packages_to_install=" FelixKratz/formulae/borders koekeishiya/formulae/yabai koekeishiya/formulae/skhd"
+    macos_packages_to_install=" FelixKratz/formulae/borders koekeishiya/formulae/yabai koekeishiya/formulae/skhd wezterm"
 
     echo_if_verbose -n "Installing packages "
     if [[ $system == "Linux" ]]; then
@@ -165,6 +165,7 @@ install_packages() {
 
 }
 
+# download nvim plugin manager and install plugins
 setup_nvim() {
     if ! [ -e $HOME/.local/share/nvim/site/autoload/plug.vim ]; then
         echo_if_verbose "Downloading plug.vim"
@@ -175,6 +176,8 @@ setup_nvim() {
     nvim -es -u init.vim -i NONE -c "PlugInstall" -c "qa"
 }
 
+
+# download yazi plugins
 setup_yazi() {
     which yazi > /dev/null 2>&1
     if [ $? -ne 0 ]; then
@@ -188,7 +191,9 @@ setup_yazi() {
 
 # changes default shell to zsh
 change_shell() {
-    chsh -s $(which zsh)
+    if ! echo $SHELL | grep -q zsh; then
+        chsh -s $(which zsh)
+    fi
 }
 
 dotfiles_dir="$(pwd)/dotfiles"

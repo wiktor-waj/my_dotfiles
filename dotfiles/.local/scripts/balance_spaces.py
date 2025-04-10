@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/opt/homebrew/bin/python3
 # script used for auto balancing MacOS spaces based on number of displays
 # 
 # built-in display = index 1
