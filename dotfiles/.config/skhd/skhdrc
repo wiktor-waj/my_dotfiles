@@ -57,12 +57,17 @@
 # prevent skhd from monitoring events for specific applications.
 #
 .blacklist [
-    "Steam"
     "Dota 2"
+    "Minecraft*"
 ]
 
-# open terminal
-cmd - return : open -a 'wezTerm'
+# open applications
+alt - return : open -a 'wezTerm'
+alt - f : /opt/homebrew/bin/wezterm-gui start -- yazi ~
+alt + shift - f : open -a 'Finder'
+alt - w : open -a 'Safari'
+alt - m : open -a 'Spotify'
+alt - d : open -a 'Discord'
 
 # restart yabai
 hyper - r : yabai --restart-service; sleep 3 && yabai -m rule --apply
@@ -121,7 +126,7 @@ shift + ctrl - d : yabai -m window --move rel:20:0
 ctrl + cmd - f : yabai -m window --toggle zoom-fullscreen
 
 # toggle window native fullscreen
-alt - f : yabai -m window --toggle native-fullscreen
+cmd + alt - f : yabai -m window --toggle native-fullscreen
 
 # float / unfloat window and restore position
 ctrl + cmd - t : yabai -m window --toggle float --grid 4:4:1:1:2:2

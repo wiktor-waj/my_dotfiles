@@ -6,194 +6,192 @@ force=0
 
 # help message function
 print_help() {
-    echo "Usage: $0 [options]"
-    echo "Options:"
-    echo "  -v  Verbose output. Print more information."
-    echo "  -f  Force. Always create symlinks even if files already exist. "
-    echo "  -h  Help. Show this usage message."
-    exit 0
+  echo "Usage: $0 [options]"
+  echo "Options:"
+  echo "  -v  Verbose output. Print more information."
+  echo "  -f  Force. Always create symlinks even if files already exist. "
+  echo "  -h  Help. Show this usage message."
+  exit 0
 }
 
 # parse command line options
 while getopts ":vfh" opt; do
-    case $opt in
-        v)
-            verbose=1
-            ;;
-        f)
-            force=1
-            ;;
-        h)
-            print_help
-            ;;
-        \?)
-            echo "Invalid option: -$OPTARG" >&2
-            exit 1
-            ;;
-    esac
+  case $opt in
+  v)
+    verbose=1
+    ;;
+  f)
+    force=1
+    ;;
+  h)
+    print_help
+    ;;
+  \?)
+    echo "Invalid option: -$OPTARG" >&2
+    exit 1
+    ;;
+  esac
 done
 
 # remove the options from the positional parameters
-shift $((OPTIND -1))
-
+shift $((OPTIND - 1))
 
 # function to echo messages if verbose is enabled
 echo_if_verbose() {
-    [ $verbose -eq 1 ] && echo "$@"
+  [ $verbose -eq 1 ] && echo "$@"
 }
 
 # function to create a directory if it doesn't exist
 create_directory() {
-    if [ ! -d "$1" ]; then
-        echo_if_verbose "Creating directory: $1"
-        mkdir -p "$1"
-    else
-        echo_if_verbose "Directory already exists: $1"
-    fi
+  if [ ! -d "$1" ]; then
+    echo_if_verbose "Creating directory: $1"
+    mkdir -p "$1"
+  else
+    echo_if_verbose "Directory already exists: $1"
+  fi
 }
 
 create_backup() {
-    local target_file=$1
-    local backup_dir=$2
+  local target_file=$1
+  local backup_dir=$2
 
-    local backup_path="${target_file/$HOME/$backup_dir}"
-    if [[ ! -d $(dirname $backup_path) ]]; then
-        mkdir -p $(dirname $backup_path)
-    fi
-    mv "$target_file" "$backup_path"
-    echo_if_verbose "Moved existing file to $backup_path"
+  local backup_path="${target_file/$HOME/$backup_dir}"
+  if [[ ! -d $(dirname $backup_path) ]]; then
+    mkdir -p $(dirname $backup_path)
+  fi
+  mv "$target_file" "$backup_path"
+  echo_if_verbose "Moved existing file to $backup_path"
 }
 
 create_symlink() {
-    local file_path=$1
-    local link_path=$2
+  local file_path=$1
+  local link_path=$2
 
-    ln -s "$(realpath -- "$file_path")" "$link_path"
-    echo_if_verbose "Created new symlink for $file_path -- $link_path"
+  ln -s "$(realpath -- "$file_path")" "$link_path"
+  echo_if_verbose "Created new symlink for $file_path -- $link_path"
 
 }
 
 # function to create symlinks for all files in a specified directory
 create_symlinks() {
-    local source_dir=$1
-    local backup_dir="./backup"
-    local linux_exclusives=" i3/config"
-    local macos_exclusives=" skhd/skhdrc yabai/yabairc borders/bordersrc scripts/toggle_function_keys.sh scripts/balance_spaces.py wezterm/wezterm.lua"
+  local source_dir=$1
+  local backup_dir="./backup"
+  local linux_exclusives=" i3/config"
+  local macos_exclusives=" skhd/skhdrc yabai/yabairc borders/bordersrc scripts/toggle_function_keys.sh scripts/balance_spaces.py wezterm/wezterm.lua"
 
-    # Ensure the backup directory exists
-    create_directory "$backup_dir"
+  # Ensure the backup directory exists
+  create_directory "$backup_dir"
 
-    # Find all files in the source directory and loop through them
-    for file in $(find $source_dir -type f); do
-        # Construct the target directory path
-        local target_file="${file/$source_dir/$HOME}"
-        local target_dir=$(dirname "$target_file")
+  # Find all files in the source directory and loop through them
+  for file in $(find $source_dir -type f); do
+    # Construct the target directory path
+    local target_file="${file/$source_dir/$HOME}"
+    local target_dir=$(dirname "$target_file")
 
-        # if on MacOS skip Linux exclusives
-        file_base="${file/$source_dir\/.config\//}"
-        if [[ $system == "MacOS" ]]; then
-            if echo $linux_exclusives | grep -q "$file_base"; then
-                echo_if_verbose "Skipping $file_base because it's Linux exclusive"
-                echo_if_verbose
-                continue
-            fi
-        # and vice-versa for Linux
-        elif [[ $system == "Linux" ]]; then
-            if echo $macos_exclusives | grep "$file_base"; then
-                echo_if_verbose "Skipping $file_base because it's MacOS exclusive"
-                echo_if_verbose
-                continue
-            fi
-        fi
+    # if on MacOS skip Linux exclusives
+    file_base="${file/$source_dir\/.config\//}"
+    if [[ $system == "MacOS" ]]; then
+      if echo $linux_exclusives | grep -q "$file_base"; then
+        echo_if_verbose "Skipping $file_base because it's Linux exclusive"
+        echo_if_verbose
+        continue
+      fi
+    # and vice-versa for Linux
+    elif [[ $system == "Linux" ]]; then
+      if echo $macos_exclusives | grep -q "$file_base"; then
+        echo_if_verbose "Skipping $file_base because it's MacOS exclusive"
+        echo_if_verbose
+        continue
+      fi
+    fi
 
-        # Create the target directory if it doesn't exist
-        create_directory "$target_dir"
+    # Create the target directory if it doesn't exist
+    create_directory "$target_dir"
 
-        # Check if the file (or symlink) already exists
-        if [ -e "$target_file" ] || [ -h $target_file ]; then
-            if [ $force -eq 1 ]; then
-                # Force mode: backup  without prompting
-                create_backup "$target_file" "$backup_dir"
-                create_symlink "$file" "$target_file"
-            else
-                # No force mode: ask the user
-                echo "File $target_file exists. "
-                echo -n "Move to backup and create a new symlink? (y/N) "
-                read -n 1 -r
-                echo    # Move to a new line
-                if [[ $REPLY =~ ^[Yy]$ ]]; then
-                    create_backup "$target_file" "$backup_dir"
-                    create_symlink "$file" "$target_file"
-                else
-                    echo "Skipping $(basename $file)"
-                    echo
-                fi
-            fi
+    # Check if the file (or symlink) already exists
+    if [ -e "$target_file" ] || [ -h $target_file ]; then
+      if [ $force -eq 1 ]; then
+        # Force mode: backup  without prompting
+        create_backup "$target_file" "$backup_dir"
+        create_symlink "$file" "$target_file"
+      else
+        # No force mode: ask the user
+        echo "File $target_file exists. "
+        echo -n "Move to backup and create a new symlink? (y/N) "
+        read -n 1 -r
+        echo # Move to a new line
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+          create_backup "$target_file" "$backup_dir"
+          create_symlink "$file" "$target_file"
         else
-            create_symlink "$file" "$target_file"
+          echo "Skipping $(basename $file)"
+          echo
         fi
-    done
-    echo_if_verbose "All symbolic links for the dotfiles have been created."
+      fi
+    else
+      create_symlink "$file" "$target_file"
+    fi
+  done
+  echo_if_verbose "All symbolic links for the dotfiles have been created."
 }
 
 install_packages() {
-    common_packages_to_install=" neovim tmux gnupg jq fzf fd yazi poppler xdg-ninja clipboard python"
-    linux_packages_to_install=" zsh wget curl"
-    macos_packages_to_install=" FelixKratz/formulae/borders koekeishiya/formulae/yabai koekeishiya/formulae/skhd wezterm"
+  common_packages_to_install=" neovim tmux gnupg jq fzf fd yazi poppler xdg-ninja clipboard python lazygit"
+  linux_packages_to_install=" zsh wget curl zathura"
+  macos_packages_to_install=" borders koekeishiya/formulae/yabai koekeishiya/formulae/skhd wezterm mactex-no-gui"
+  macos_homebrew_taps= " FelixKratz/formulae"
 
-    echo_if_verbose -n "Installing packages "
-    if [[ $system == "Linux" ]]; then
-        if cat /etc/*release | grep ^NAME | grep -q -E -i 'CentOS|Red|Fedora'; then
-            echo_if_verbose "for RedHat based Linux"
-            yum install -y $common_packages_to_install $linux_packages_to_install 
-        elif cat /etc/*release | grep ^NAME | grep -q -E -i 'Ubuntu|Debian|Mint'; then
-            echo_if_verbose "for Debian based Linux"
-            apt-get update && apt-get install -y $common_packages_to_install $linux_packages_to_install 
-        elif cat /etc/*release | grep ^NAME | grep -q -E -i 'Arch|Manjaro'; then
-            echo_if_verbose "for Arch based Linux"
-            sudo pacman -Syu $common_packages_to_install $linux_packages_to_install 
-        fi
-    elif [[ $system == "MacOS" ]]; then
-        echo_if_verbose "for MacOS"
-        brew update && brew install $common_packages_to_install $macos_packages_to_install
-        skhd --start-service
-        yabai --start-service
-    else
-        echo "OS NOT DETECTED, couldn't install packages"
-        exit 1;
+  echo_if_verbose -n "Installing packages "
+  if [[ $system == "Linux" ]]; then
+    if cat /etc/*release | grep ^NAME | grep -q -E -i 'CentOS|Red|Fedora'; then
+      echo_if_verbose "for RedHat based Linux"
+      sudo yum install -y $common_packages_to_install $linux_packages_to_install
+    elif cat /etc/*release | grep ^NAME | grep -q -E -i 'Ubuntu|Debian|Mint'; then
+      echo_if_verbose "for Debian based Linux"
+      apt-get update && apt-get install -y $common_packages_to_install $linux_packages_to_install
+    elif cat /etc/*release | grep ^NAME | grep -q -E -i 'Arch|Manjaro'; then
+      echo_if_verbose "for Arch based Linux"
+      sudo pacman -Syu $common_packages_to_install $linux_packages_to_install
     fi
+  elif [[ $system == "MacOS" ]]; then
+    echo_if_verbose "for MacOS"
+    brew update && brew install $common_packages_to_install $macos_packages_to_install
+    skhd --start-service
+    yabai --start-service
+  else
+    echo "OS NOT DETECTED, couldn't install packages"
+    exit 1
+  fi
 
 }
 
 # download nvim plugin manager and install plugins
 setup_nvim() {
-    if ! [ -e $HOME/.local/share/nvim/site/autoload/plug.vim ]; then
-        echo_if_verbose "Downloading plug.vim"
-        sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-           https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-    fi
-    echo_if_verbose "Installing nvim plugins"
-    nvim -es -u init.vim -i NONE -c "PlugInstall" -c "qa"
+  if ! [ -e $HOME/.config/nvim/lazyvim.json ]; then
+    echo_if_verbose "Creating backup of ~/.config/nvim"
+    mv ~/.config/nvim{,.bak}
+    echo_if_verbose "Downloading lazyvim"
+    git clone https://github.com/LazyVim/starter ~/.config/nvim
+  fi
 }
-
 
 # download yazi plugins
 setup_yazi() {
-    which yazi > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
-        echo "Install yazi and run this script again to install yazi's plugins"
-        return 1
-    else
-        ya pack -i
-    fi
-    return 0
+  which yazi >/dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    echo "Install yazi and run this script again to install yazi's plugins"
+    return 1
+  else
+    ya pack -i
+  fi
+  return 0
 }
 
 # changes default shell to zsh
 change_shell() {
-    if ! echo $SHELL | grep -q zsh; then
-        chsh -s $(which zsh)
-    fi
+  if ! echo $SHELL | grep -q zsh; then
+    chsh -s $(which zsh)
+  fi
 }
 
 dotfiles_dir="$(pwd)/dotfiles"
@@ -201,13 +199,13 @@ dotfiles_dir="$(pwd)/dotfiles"
 # Determine system
 system=$(uname -s)
 if echo $system | grep -q Darwin; then
-    system="MacOS"
+  system="MacOS"
 elif echo $system | grep -q Linux; then
-    system="Linux"
+  system="Linux"
 fi
 
+setup_nvim
 create_symlinks "$dotfiles_dir"
 install_packages
-setup_nvim
 setup_yazi
 change_shell
