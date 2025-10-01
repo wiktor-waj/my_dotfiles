@@ -136,7 +136,7 @@ create_symlinks() {
 }
 
 install_packages() {
-  common_packages_to_install=" neovim tmux gnupg jq fzf fd yazi poppler xdg-ninja clipboard python3 lazygit"
+  common_packages_to_install=" neovim tmux gnupg jq fzf fd yazi poppler xdg-ninja clipboard python3 lazygit neofetch"
   linux_packages_to_install=" zsh wget curl"
   macos_packages_to_install=" borders koekeishiya/formulae/yabai koekeishiya/formulae/skhd
                               wezterm mactex-no-gui xcode-build-server xcbeautify ruby
@@ -160,6 +160,7 @@ install_packages() {
         sudo apt-get install build-essential
         # install brew
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
       fi
       brew update && brew install $common_packages_to_install $linux_packages_to_install
     fi
@@ -201,6 +202,9 @@ setup_yazi() {
 # changes default shell to zsh
 change_shell() {
   if ! echo $SHELL | grep -q zsh; then
+    if [[ $system != 'Darwin' ]]; then
+      command -v zsh | sudo tee -a /etc/shells
+    fi
     chsh -s $(which zsh)
   fi
 }

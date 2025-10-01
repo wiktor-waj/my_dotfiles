@@ -55,7 +55,7 @@ if [[ $SYSTEM == "Darwin" ]]; then
   # %(?.λ.%?) <- if return code (?) is 0 show lambda, else show %? (return code of
   # previous command)
   PS1='%F{10}%(?.λ.%?)%F{11}$(__git_ps1 " (%s)") %F{12}%2~ %f%# '
-elif [[ $SYSTEM == "Linux" ]]; then
+elif
   # Linux runs on servers it's good to see the username and hostname instead
   PS1='%F{10}%n@%M%F{11}$(__git_ps1 " (%s)") %F{12}%2~ %f%# '
 fi
