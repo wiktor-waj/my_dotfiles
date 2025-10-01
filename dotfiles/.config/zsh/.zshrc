@@ -57,7 +57,7 @@ if [[ $SYSTEM == "Darwin" ]]; then
   PS1='%F{10}%(?.λ.%?)%F{11}$(__git_ps1 " (%s)") %F{12}%2~ %f%# '
 elif [[ $SYSTEM == "Linux" ]]; then
   # Linux runs on servers it's good to see the username and hostname instead
-  PS1='%F{10}%n@%MF{11}$(__git_ps1 " (%s)") %F{12}%2~ %f%# '
+  PS1='%F{10}%n@%M%F{11}$(__git_ps1 " (%s)") %F{12}%2~ %f%# '
 fi
 
 # Set Default Editor
