@@ -31,6 +31,9 @@ import subprocess
 
 
 def query_displays():
+    """
+        Returns the output of yabai -m query --displays in dictionary format
+    """
     query_displays_cmd = "yabai -m query --displays"
     process = subprocess.Popen(query_displays_cmd, shell=True, stdout=subprocess.PIPE)
     stdout, _ = process.communicate(timeout=15)

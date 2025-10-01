@@ -138,8 +138,10 @@ create_symlinks() {
 install_packages() {
   common_packages_to_install=" neovim tmux gnupg jq fzf fd yazi poppler xdg-ninja clipboard python lazygit"
   linux_packages_to_install=" zsh wget curl zathura"
-  macos_packages_to_install=" borders koekeishiya/formulae/yabai koekeishiya/formulae/skhd wezterm mactex-no-gui"
-  macos_homebrew_taps= " FelixKratz/formulae"
+  macos_packages_to_install=" borders koekeishiya/formulae/yabai koekeishiya/formulae/skhd
+                              wezterm mactex-no-gui xcode-build-server xcbeautify ruby
+                              pipx rg jq coreutils"
+  macos_homebrew_taps=" FelixKratz/formulae"
 
   echo_if_verbose -n "Installing packages "
   if [[ $system == "Linux" ]]; then
@@ -155,6 +157,7 @@ install_packages() {
     fi
   elif [[ $system == "MacOS" ]]; then
     echo_if_verbose "for MacOS"
+    brew tap $macos_homebrew_taps
     brew update && brew install $common_packages_to_install $macos_packages_to_install
     skhd --start-service
     yabai --start-service

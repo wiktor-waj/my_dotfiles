@@ -32,8 +32,8 @@ yabai -m space 10 --label music  # right monitor
 
 # window rules
 yabai -m rule --add app="Safari"       space=web
-yabai -m rule --add app="Mail"         space=mail
-yabai -m rule --add app="Messages"     space=social
+yabai -m rule --add app="^Mail"        space=mail
+yabai -m rule --add app="^Messages$"   space=social
 yabai -m rule --add app="Notes"        space=notes
 yabai -m rule --add app="Xcode"        space=code
 yabai -m rule --add app="Transmission" space=media
@@ -71,7 +71,7 @@ ignored_apps=(
   "Transmission"
   "TV"
   "Weather"
-  "^Proton.*$"
+  "^Proton.*"
 )
 
 for app in "${ignored_apps[@]}";
@@ -83,12 +83,12 @@ yabai -m rule --add app="Finder" title=" Info"      manage=off
 yabai -m rule --add app="Finder" title="Copy"       manage=off
 yabai -m rule --add app="Finder" title="Mov"        manage=off
 yabai -m rule --add app="Finder" title="Trash"      manage=off
-yabai -m rule --add app="Mail"   title="[General|Accounts|Junk Mail|Fonts & Colors|Viewing|Composing|Signatures|Rules|Extensions|Privacy]" manage=off
+#yabai -m rule --add app="Mail" manage=off
+yabai -m rule --add app="Mail"   title="[General|Accounts|Junk Mail|Fonts & Colors|Viewing|Composing|Signatures|Rules|Extensions|Privacy|New Message]" manage=off
 # https://support.apple.com/guide/music/use-music-miniplayer-mus71d7dcfce/mac
 yabai -m rule --add app="Music"  title="[MiniPlayer|Activity]" manage=off
 
 # specific space settings
-yabai -m config --space social layout stack
 yabai -m config --space social top_padding 15 bottom_padding 30 left_padding 30 right_padding 30
 yabai -m config --space mail top_padding 15 bottom_padding 30 left_padding 30 right_padding 30
 yabai -m config --space music     layout stack
@@ -104,7 +104,7 @@ yabai -m config                                 \
     window_insertion_point       focused        \
     window_zoom_persist          on             \
     window_shadow                off            \
-    window_animation_duration    0.0            \
+    window_animation_duration    0.1            \
     window_animation_easing      ease_out_circ  \
     window_opacity_duration      0.0            \
     active_window_opacity        1.0            \

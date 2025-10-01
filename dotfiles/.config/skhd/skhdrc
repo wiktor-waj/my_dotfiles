@@ -59,6 +59,7 @@
 .blacklist [
     "Dota 2"
     "Minecraft*"
+    "Simulator"
 ]
 
 # open applications

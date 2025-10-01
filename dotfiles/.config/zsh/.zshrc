@@ -1,5 +1,5 @@
 # Set Paths
-export PATH="$PATH:$HOME/.local/scripts"
+export PATH="$PATH:$HOME/.local/scripts:$HOME/.local/bin"
 export FPATH="$HOME/.local/functions:$FPATH"
 # ------------------------------------------------------------
 # export PATH="/directory:$PATH"           # Exports a path in front (higher priority)
@@ -48,9 +48,17 @@ source $HOME/.local/git/git-prompt.sh
 GIT_PS1_SHOWDIRTYSTATE=true
 GIT_PS1_SHOWUNTRACKEDFILES=true
 GIT_PS1_SHOWSTASHSTATE=true
-# %(?.λ.%?) <- if return code (?) is 0 show lambda, else show %? (return code of
-# previous command)
-setopt PROMPT_SUBST ; PS1='%F{10}%(?.λ.%?)%F{11}$(__git_ps1 " (%s)") %F{12}%2~ %f%# '
+
+# set prompt
+setopt PROMPT_SUBST 
+if [[ $SYSTEM == "Darwin" ]]; then
+  # %(?.λ.%?) <- if return code (?) is 0 show lambda, else show %? (return code of
+  # previous command)
+  PS1='%F{10}%(?.λ.%?)%F{11}$(__git_ps1 " (%s)") %F{12}%2~ %f%# '
+elif [[ $SYSTEM == "Linux" ]]; then
+  # Linux runs on servers it's good to see the username and hostname instead
+  PS1='%F{10}%n@%MF{11}$(__git_ps1 " (%s)") %F{12}%2~ %f%# '
+fi
 
 # Set Default Editor
 export EDITOR=nvim
