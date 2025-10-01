@@ -137,7 +137,7 @@ create_symlinks() {
 
 install_packages() {
   common_packages_to_install=" neovim tmux gnupg jq fzf fd yazi poppler xdg-ninja clipboard python3 lazygit"
-  linux_packages_to_install=" zsh wget curl zathura"
+  linux_packages_to_install=" zsh wget curl"
   macos_packages_to_install=" borders koekeishiya/formulae/yabai koekeishiya/formulae/skhd
                               wezterm mactex-no-gui xcode-build-server xcbeautify ruby
                               pipx rg jq coreutils"
