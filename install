@@ -136,7 +136,7 @@ create_symlinks() {
 }
 
 install_packages() {
-  common_packages_to_install=" neovim tmux gnupg jq fzf fd yazi poppler xdg-ninja clipboard python lazygit"
+  common_packages_to_install=" neovim tmux gnupg jq fzf fd yazi poppler xdg-ninja clipboard python3 lazygit"
   linux_packages_to_install=" zsh wget curl zathura"
   macos_packages_to_install=" borders koekeishiya/formulae/yabai koekeishiya/formulae/skhd
                               wezterm mactex-no-gui xcode-build-server xcbeautify ruby
@@ -144,18 +144,26 @@ install_packages() {
   macos_homebrew_taps=" FelixKratz/formulae"
 
   echo_if_verbose -n "Installing packages "
-  if [[ $system == "Linux" ]]; then
-    if cat /etc/*release | grep ^NAME | grep -q -E -i 'CentOS|Red|Fedora'; then
+  if [[ $system != "Darwin" ]]; then
+    if [[ $system =~ 'CentOS|Red|Fedora' ]]; then
       echo_if_verbose "for RedHat based Linux"
       sudo yum install -y $common_packages_to_install $linux_packages_to_install
-    elif cat /etc/*release | grep ^NAME | grep -q -E -i 'Ubuntu|Debian|Mint'; then
+    elif [[ $system =~ 'Ubuntu|Mint' ]]; then
       echo_if_verbose "for Debian based Linux"
       apt-get update && apt-get install -y $common_packages_to_install $linux_packages_to_install
-    elif cat /etc/*release | grep ^NAME | grep -q -E -i 'Arch|Manjaro'; then
+    elif [[ $system =~ 'Arch|Manjaro' ]]; then
       echo_if_verbose "for Arch based Linux"
       sudo pacman -Syu $common_packages_to_install $linux_packages_to_install
+    elif [[ $system == 'Debian' ]]; then
+      # just use brew, apt has too many outdated packages
+      if [[ ! -d "/home/linuxbrew" ]]; then
+        sudo apt-get install build-essential
+        # install brew
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      fi
+      brew update && brew install $common_packages_to_install $linux_packages_to_install
     fi
-  elif [[ $system == "MacOS" ]]; then
+  elif [[ $system == "Darwin" ]]; then
     echo_if_verbose "for MacOS"
     brew tap $macos_homebrew_taps
     brew update && brew install $common_packages_to_install $macos_packages_to_install
@@ -201,10 +209,8 @@ dotfiles_dir="$(pwd)/dotfiles"
 
 # Determine system
 system=$(uname -s)
-if echo $system | grep -q Darwin; then
-  system="MacOS"
-elif echo $system | grep -q Linux; then
-  system="Linux"
+if [[ $system != "Darwin" ]]; then
+  system=$(lsb_release -is)
 fi
 
 setup_nvim

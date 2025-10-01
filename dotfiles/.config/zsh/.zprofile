@@ -1,9 +1,18 @@
 # know what system you are running config
-export SYSTEM=$(uname -s)
+SYSTEM=$(uname -s)
+if [[ $SYSTEM != "Darwin" ]]; then
+  SYSTEM=$(lsb_release -is)
+fi
+export $SYSTEM
 
 # enable brew autocompletion and disable that ridiculous emoji
-if [[ $SYSTEM == "Dariwn" ]]; then
+if [[ $SYSTEM =~ "Darwin" ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
+  export HOMEBREW_NO_EMOJI=1
+fi
+# also use brew for Debian, apt has way too many outdated packages
+if [[ $SYSTEM == 'Debian' ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
   export HOMEBREW_NO_EMOJI=1
 fi
 
