@@ -1,5 +1,5 @@
 # Set Paths
-export PATH="$PATH:$HOME/.local/scripts:$HOME/.local/bin"
+export PATH="$PATH:$HOME/.local/scripts:$HOME/.local/share"
 export FPATH="$HOME/.local/functions:$FPATH"
 # ------------------------------------------------------------
 # export PATH="/directory:$PATH"           # Exports a path in front (higher priority)
