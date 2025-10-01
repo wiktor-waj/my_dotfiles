@@ -6,7 +6,7 @@ fi
 export $SYSTEM
 
 # enable brew autocompletion and disable that ridiculous emoji
-if [[ $SYSTEM =~ "Darwin" ]]; then
+if [[ $SYSTEM == 'Darwin' ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
   export HOMEBREW_NO_EMOJI=1
 fi
@@ -17,7 +17,9 @@ if [[ $SYSTEM == 'Debian' ]]; then
 fi
 
 # set up fzf key bindings and fuzzy completion
-source <(fzf --zsh)
+if command -v fzf >/dev/null 2>&1; then
+  source <(fzf --zsh)
+fi
 
 # pyenv variables and init
 export PYENV_ROOT="$XDG_DATA_HOME/pyenv"
