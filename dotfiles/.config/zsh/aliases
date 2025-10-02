@@ -1,7 +1,7 @@
 # Make sudo aplicable for aliases
 alias sudo='sudo '
 # make ls and grep colorfull
-alias ls='ls -GF'
+alias ls='ls -GF --color=auto'
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
