@@ -35,28 +35,37 @@ def query_displays():
         Returns the output of yabai -m query --displays in dictionary format
     """
     query_displays_cmd = "yabai -m query --displays"
-    process = subprocess.Popen(query_displays_cmd, shell=True, stdout=subprocess.PIPE)
-    stdout, _ = process.communicate(timeout=15)
+    with subprocess.Popen(query_displays_cmd, shell=True, stdout=subprocess.PIPE) as process:
+        stdout, _ = process.communicate(timeout=15)
     query_displays_out = stdout.decode("utf-8")
 
     return json.loads(query_displays_out)
 
 
 def create_spaces(display_idx, spaces_count):
+    """
+        Creates a specified amount macOS spaces (desktops)
+    """
     create_cmd = f"yabai -m space --create {display_idx}"
     for _ in range(spaces_count):
-        subprocess.run(create_cmd, shell=True)
+        subprocess.run(create_cmd, shell=True, check=False)
 
 
 def delete_spaces(spaces, spaces_count):
+    """
+        Deletes a specified amount of macOS spaces starting from the end (highest number)
+    """
     # delete spaces from end
     for _ in range(spaces_count):
         popped_space = spaces.pop()
         destroy_cmd = f"yabai -m space --destroy {popped_space}"
-        subprocess.run(destroy_cmd, shell=True)
+        subprocess.run(destroy_cmd, shell=True, check=False)
 
 
 def balance_display(display, correct_space_count):
+    """
+        Sets the number of spaces for specified display to correct_space_count
+    """
     display_idx = display["index"]
     spaces = display["spaces"]
     space_diff = abs(correct_space_count - len(spaces))
@@ -65,27 +74,41 @@ def balance_display(display, correct_space_count):
     elif len(spaces) > correct_space_count:
         delete_spaces(spaces, space_diff)
 
+def find_display_by_index(display_list, index):
+    """
+        Given the index returns a display
+    """
+    builtin = display_list[0]
+    for display in display_list:
+        if display['index'] == index:
+            return display
+    return builtin
+
 
 def balance_spaces():
+    """
+        Main function. For each display balances the amount of spaces as specified in the comment
+        at the begining of this file
+    """
     display_list = query_displays()
     if len(display_list) == 3:
-        middle_display = display_list[0]  # display id 2, middle, main
+        middle_display = find_display_by_index(display_list, 1)  #  middle, main
         balance_display(middle_display, 8)
 
         # need to query displays again after each change in spaces
         display_list = query_displays()
-        left_display = display_list[2]  # display id 3, left
+        left_display = find_display_by_index(display_list, 2)  #  left
         balance_display(left_display, 1)
 
         display_list = query_displays()
-        right_display = display_list[1]  # display id 1, right, built-in
+        right_display = find_display_by_index(display_list, 3)  # right, built-in
         balance_display(right_display, 1)
     elif len(display_list) == 2:
-        main_display = display_list[0]  # display id 2, main
+        main_display = find_display_by_index(display_list, 1)  #  main
         balance_display(main_display, 9)
 
         display_list = query_displays()
-        built_in_display = display_list[1]  # display id 1, built-in
+        built_in_display = find_display_by_index(display_list, 2)  #  built-in
         balance_display(built_in_display, 1)
     elif len(display_list) == 1:
         balance_display(display_list[0], 10)  # display id 1, built-in

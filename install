@@ -138,10 +138,9 @@ create_symlinks() {
 install_packages() {
   common_packages_to_install=" neovim tmux gnupg jq fzf fd yazi poppler xdg-ninja clipboard python3 lazygit neofetch"
   linux_packages_to_install=" zsh wget curl"
-  macos_packages_to_install=" borders koekeishiya/formulae/yabai koekeishiya/formulae/skhd
+  macos_packages_to_install=" asmvik/formulae/yabai asmvik/formulae/skhd
                               wezterm mactex-no-gui xcode-build-server xcbeautify ruby
                               pipx rg jq coreutils"
-  macos_homebrew_taps=" FelixKratz/formulae"
 
   echo_if_verbose -n "Installing packages "
   if [[ $system != "Darwin" ]]; then
@@ -166,7 +165,6 @@ install_packages() {
     fi
   elif [[ $system == "Darwin" ]]; then
     echo_if_verbose "for MacOS"
-    brew tap $macos_homebrew_taps
     brew update && brew install $common_packages_to_install $macos_packages_to_install
     skhd --start-service
     yabai --start-service
