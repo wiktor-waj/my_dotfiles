@@ -1,7 +1,11 @@
 # know what system you are running config
 SYSTEM=$(uname -s)
 if [[ $SYSTEM != "Darwin" ]]; then
-  SYSTEM=$(lsb_release -is)
+  if command -v lsb_release > /dev/null 2>&1; then
+    SYSTEM=$(lsb_release -is)
+  else
+    SYSTEM="UNKNOWN"
+  fi
 fi
 export $SYSTEM
 
@@ -11,14 +15,9 @@ if [[ $SYSTEM == 'Darwin' ]]; then
   export HOMEBREW_NO_EMOJI=1
 fi
 # also use brew for Debian, apt has way too many outdated packages
-if [[ $SYSTEM == 'Debian' ]]; then
+if [[ $SYSTEM == 'Debian|OTHER' ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
   export HOMEBREW_NO_EMOJI=1
-fi
-
-# set up fzf key bindings and fuzzy completion
-if command -v fzf >/dev/null 2>&1; then
-  source <(fzf --zsh)
 fi
 
 # pyenv variables and init

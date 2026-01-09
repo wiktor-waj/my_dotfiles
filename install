@@ -140,7 +140,7 @@ install_packages() {
   linux_packages_to_install=" zsh wget curl"
   macos_packages_to_install=" asmvik/formulae/yabai asmvik/formulae/skhd
                               wezterm mactex-no-gui xcode-build-server xcbeautify ruby
-                              pipx rg jq coreutils"
+                              pipx rg jq coreutils mole"
 
   echo_if_verbose -n "Installing packages "
   if [[ $system != "Darwin" ]]; then

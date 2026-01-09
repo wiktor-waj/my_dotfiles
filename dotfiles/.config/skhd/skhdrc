@@ -60,6 +60,7 @@
     "Dota 2"
     "Minecraft*"
     "Simulator"
+    "Sketch"
 ]
 
 # open applications
@@ -67,14 +68,14 @@ alt - return : open -a 'wezTerm'
 alt - f : /opt/homebrew/bin/wezterm-gui start -- yazi ~
 alt + shift - f : open -a 'Finder'
 alt - w : open -a 'Safari'
-alt - m : open -a 'Spotify'
+alt - m : open -a 'Music'
 alt - d : open -a 'Discord'
 
 # restart yabai
 hyper - r : yabai --restart-service; sleep 3 && yabai -m rule --apply
 
 # focus window
-cmd - 0x2C : yabai -m window --focus recent   # cmd + /
+# cmd - 0x2C : yabai -m window --focus recent   # cmd + /
 cmd - h : yabai -m window --focus west || yabai -m display --focus west
 cmd - j : yabai -m window --focus south || yabai -m display --focus south
 cmd - k : yabai -m window --focus north || yabai -m display --focus north

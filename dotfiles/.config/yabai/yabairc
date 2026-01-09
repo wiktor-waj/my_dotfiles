@@ -37,9 +37,9 @@ yabai -m rule --add app="^Messages$"   space=social
 yabai -m rule --add app="Notes"        space=notes
 yabai -m rule --add app="Xcode"        space=code
 yabai -m rule --add app="TV"           space=media
+yabai -m rule --add app="Music"        space=music
 yabai -m rule --add app="Spotify"      space=music
 yabai -m rule --add app="Discord"      space=music
-yabai -m rule --add app="Music"        space=music
 yabai -m rule --add app="Minecraft.*"  space=games
 yabai -m rule --add app="java"         space=games
 yabai -m rule --add app="Steam"        space=games
@@ -58,6 +58,7 @@ ignored_apps=(
   "Find My"
   "Installer"
   "IINA"
+  "Phone"
   "Photo Booth"
   "Podcasts"
   "Poolside FM"
@@ -87,12 +88,13 @@ yabai -m rule --add app="Finder" title="Trash"      manage=off
 #yabai -m rule --add app="Mail" manage=off
 yabai -m rule --add app="Mail"   title="[General|Accounts|Junk Mail|Fonts & Colors|Viewing|Composing|Signatures|Rules|Extensions|Privacy|New Message]" manage=off
 # https://support.apple.com/guide/music/use-music-miniplayer-mus71d7dcfce/mac
-yabai -m rule --add app="Music"  title="[MiniPlayer|Activity]" manage=off
+yabai -m rule --add app="Music"  title="[MiniPlayer|Activity|Account]" manage=off
 
 # specific space settings
 yabai -m config --space social top_padding 15 bottom_padding 30 left_padding 30 right_padding 30
 yabai -m config --space mail top_padding 15 bottom_padding 30 left_padding 30 right_padding 30
 yabai -m config --space music     layout stack
+yabai -m config --space code      layout stack
 yabai -m config --space music     top_padding 15 bottom_padding 30 left_padding 30 right_padding 30
 
 # global settings
