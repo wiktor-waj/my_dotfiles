@@ -74,7 +74,7 @@ alt - d : open -a 'Discord'
 hyper - r : yabai --restart-service; sleep 3 && yabai -m rule --apply
 
 # focus window
-cmd - 0x2C : yabai -m window --focus recent   # cmd + /
+# cmd - 0x2C : yabai -m window --focus recent   # cmd + /
 cmd - h : yabai -m window --focus west || yabai -m display --focus west
 cmd - j : yabai -m window --focus south || yabai -m display --focus south
 cmd - k : yabai -m window --focus north || yabai -m display --focus north

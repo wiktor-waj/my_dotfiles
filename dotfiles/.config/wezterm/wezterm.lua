@@ -15,7 +15,8 @@ config.enable_tab_bar = false
 config.freetype_load_target = "Light"
 config.window_background_opacity = 0.98
 config.macos_window_background_blur = 20
-config.window_decorations = "RESIZE" -- disable title bar
+config.window_decorations = "INTEGRATED_BUTTONS|RESIZE" -- disable title bar
+config.window_padding = { left = 20, right = 20, top = 38, bottom = 10 } -- make space for buttons
 config.keys = {
 	{ key = "p", mods = "CMD|SHIFT", action = action.ActivateCommandPalette },
 }

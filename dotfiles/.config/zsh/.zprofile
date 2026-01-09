@@ -1,7 +1,11 @@
 # know what system you are running config
 SYSTEM=$(uname -s)
 if [[ $SYSTEM != "Darwin" ]]; then
-  SYSTEM=$(lsb_release -is)
+  if command -v lsb_release > /dev/null 2>&1; then
+    SYSTEM=$(lsb_release -is)
+  else
+    SYSTEM="UNKNOWN"
+  fi
 fi
 export $SYSTEM
 

@@ -20,8 +20,13 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 
 # Because brew installs bash autocomplete for git every update it overrides
 # zsh tab completion system. Remove it so zsh tab completion can be used
-[ -e /opt/homebrew/share/zsh/site-functions/git-completion.bash ] && rm /opt/homebrew/share/zsh/site-functions/git-completion.bash
-[ -e /opt/homebrew/share/zsh/site-functions/_git ] && rm /opt/homebrew/share/zsh/site-functions/_git
+if [[ $SYSTEM == "Darwin" ]]; then
+  [ -e /opt/homebrew/share/zsh/site-functions/git-completion.bash ] && rm /opt/homebrew/share/zsh/site-functions/git-completion.bash
+  [ -e /opt/homebrew/share/zsh/site-functions/_git ] && rm /opt/homebrew/share/zsh/site-functions/_git
+else
+  [ -e /home/linuxbrew/share/zsh/site-functions/git-completion.bash ] && rm /home/linuxbrew/share/zsh/site-functions/git-completion.bash
+  [ -e /home/linuxbrew/share/zsh/site-functions/_git ] && rm /home/linuxbrew/share/zsh/site-functions/_git
+fi
 
 # Enable tab completion system
 autoload -Uz compinit && compinit
