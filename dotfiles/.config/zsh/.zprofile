@@ -15,7 +15,7 @@ if [[ $SYSTEM == 'Darwin' ]]; then
   export HOMEBREW_NO_EMOJI=1
 fi
 # also use brew for Debian, apt has way too many outdated packages
-if [[ $SYSTEM == 'Debian|OTHER' ]]; then
+if [[ $SYSTEM =~ ^(Debian|OTHER)$ ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
   export HOMEBREW_NO_EMOJI=1
 fi

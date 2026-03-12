@@ -192,7 +192,7 @@ setup_yazi() {
     echo "Install yazi and run this script again to install yazi's plugins"
     return 1
   else
-    ya pack -i
+    ya pkg install
   fi
   return 0
 }
